@@ -10,6 +10,13 @@ public class Task1 {
             { 0, -1, 0 }
     };
 
+    // Define the Edge Detection Kernel
+    public static final int[][] EDGE_DETECTION_KERNEL = {
+            { -1, -1, -1 },
+            { -1, 8, -1 },
+            { -1, -1, -1 }
+    };
+
     public static void main(String[] args) {
         System.out.println("Task 1: Single-threaded Implementation");
 
@@ -25,6 +32,11 @@ public class Task1 {
         int[][] sharpenedMatrix = applyKernel(matrix, SHARPEN_KERNEL);
         System.out.println("Sharpened Matrix (First 10x10):");
         printMatrix(sharpenedMatrix, 10, 10);
+
+        // Step 4: Apply the edge detection filter
+        int[][] edgeDetectedMatrix = applyKernel(matrix, EDGE_DETECTION_KERNEL);
+        System.out.println("Edge Detected Matrix (First 10x10):");
+        printMatrix(edgeDetectedMatrix, 10, 10);
     }
 
     // Method to generate a random matrix
