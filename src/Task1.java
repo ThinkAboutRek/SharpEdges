@@ -7,12 +7,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Task1 {
+    // Define the Sharpen Kernel
     public static final int[][] SHARPEN_KERNEL = {
             { 0, -1, 0 },
             { -1, 5, -1 },
             { 0, -1, 0 }
     };
 
+    // Define the Edge Detection Kernel
     public static final int[][] EDGE_DETECTION_KERNEL = {
             { -1, -1, -1 },
             { -1, 8, -1 },
@@ -54,17 +56,19 @@ public class Task1 {
         saveMatrixAsImage(edgeDetectedMatrix, "edge_detected_matrix.png");
     }
 
+    // Method to generate a random matrix
     public static int[][] generateMatrix(int rows, int cols) {
         int[][] matrix = new int[rows][cols];
         Random rand = new Random();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                matrix[i][j] = rand.nextInt(256);
+                matrix[i][j] = rand.nextInt(256); // Random values between 0 and 255
             }
         }
         return matrix;
     }
 
+    // Method to apply a kernel to a matrix
     public static int[][] applyKernel(int[][] matrix, int[][] kernel) {
         int rows = matrix.length;
         int cols = matrix[0].length;
@@ -78,12 +82,13 @@ public class Task1 {
                         sum += matrix[i + ki][j + kj] * kernel[ki + 1][kj + 1];
                     }
                 }
-                result[i][j] = Math.min(Math.max(sum, 0), 255);
+                result[i][j] = Math.min(Math.max(sum, 0), 255); // Clamp values to 0-255
             }
         }
         return result;
     }
 
+    // Method to print part of a matrix
     public static void printMatrix(int[][] matrix, int rows, int cols) {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -97,16 +102,19 @@ public class Task1 {
         int rows = matrix.length;
         int cols = matrix[0].length;
 
+        // Create a BufferedImage
         BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_BYTE_GRAY);
 
+        // Set pixel values
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 int value = matrix[i][j];
-                int gray = (value << 16) | (value << 8) | value;
+                int gray = (value << 16) | (value << 8) | value; // Convert to grayscale
                 image.setRGB(j, i, gray);
             }
         }
 
+        // Save image as a PNG file
         try {
             File output = new File(fileName);
             ImageIO.write(image, "png", output);
