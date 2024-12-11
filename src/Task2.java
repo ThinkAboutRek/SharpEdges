@@ -26,54 +26,55 @@ public class Task2 {
         System.out.println("Task 2: Multi-threaded Implementation");
 
         // Prompt user for number of threads or use auto-detection
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of threads (or press Enter for auto-detection): ");
-        String input = scanner.nextLine();
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Enter the number of threads (or press Enter for auto-detection): ");
+            String input = scanner.nextLine();
 
-        int numThreads;
-        if (input.isEmpty()) {
-            numThreads = Runtime.getRuntime().availableProcessors();
-            System.out.println("Auto-detected " + numThreads + " available processors. Using " + numThreads
-                    + " threads for execution.");
-        } else {
-            try {
-                numThreads = Integer.parseInt(input);
-                if (numThreads <= 0) {
-                    throw new NumberFormatException();
+            int numThreads;
+            if (input.isEmpty()) {
+                numThreads = Runtime.getRuntime().availableProcessors();
+                System.out.println("Auto-detected " + numThreads + " available processors. Using " + numThreads
+                        + " threads for execution.");
+            } else {
+                try {
+                    numThreads = Integer.parseInt(input);
+                    if (numThreads <= 0) {
+                        throw new NumberFormatException();
+                    }
+                    System.out.println("Using " + numThreads + " threads as specified.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Defaulting to 1 thread.");
+                    numThreads = 1;
                 }
-                System.out.println("Using " + numThreads + " threads as specified.");
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Defaulting to 1 thread.");
-                numThreads = 1;
             }
+
+            // Step 1: Generate the matrix
+            long start = System.nanoTime();
+            int[][] matrix = generateMatrix(10000, 10000);
+            long end = System.nanoTime();
+            System.out.println("Matrix generated successfully. Time (ms): " + (end - start) / 1e6);
+
+            // Step 2: Apply the sharpen filter using multiple threads
+            start = System.nanoTime();
+            int[][] sharpenedMatrix = dynamicThreadKernelApplication(matrix, SHARPEN_KERNEL, numThreads);
+            end = System.nanoTime();
+            System.out.println("Sharpened filter applied. Time (ms): " + (end - start) / 1e6);
+
+            // Step 3: Apply the edge detection filter using multiple threads
+            start = System.nanoTime();
+            int[][] edgeDetectedMatrix = dynamicThreadKernelApplication(matrix, EDGE_DETECTION_KERNEL, numThreads);
+            end = System.nanoTime();
+            System.out.println("Edge detection filter applied. Time (ms): " + (end - start) / 1e6);
+
+            // Step 4: Save matrices as images
+            saveMatrixAsImage(sharpenedMatrix, "sharpened_matrix_mt.png");
+            saveMatrixAsImage(edgeDetectedMatrix, "edge_detected_matrix_mt.png");
+
+            // Validation step: Compare with gold standard
+            boolean isValid = validateWithGoldStandard(sharpenedMatrix,
+                    dynamicThreadKernelApplication(matrix, SHARPEN_KERNEL, 1));
+            System.out.println("Gold standard validation: " + (isValid ? "Passed" : "Failed"));
         }
-
-        // Step 1: Generate the matrix
-        long start = System.nanoTime();
-        int[][] matrix = generateMatrix(10000, 10000);
-        long end = System.nanoTime();
-        System.out.println("Matrix generated successfully. Time (ms): " + (end - start) / 1e6);
-
-        // Step 2: Apply the sharpen filter using multiple threads
-        start = System.nanoTime();
-        int[][] sharpenedMatrix = dynamicThreadKernelApplication(matrix, SHARPEN_KERNEL, numThreads);
-        end = System.nanoTime();
-        System.out.println("Sharpened filter applied. Time (ms): " + (end - start) / 1e6);
-
-        // Step 3: Apply the edge detection filter using multiple threads
-        start = System.nanoTime();
-        int[][] edgeDetectedMatrix = dynamicThreadKernelApplication(matrix, EDGE_DETECTION_KERNEL, numThreads);
-        end = System.nanoTime();
-        System.out.println("Edge detection filter applied. Time (ms): " + (end - start) / 1e6);
-
-        // Step 4: Save matrices as images
-        saveMatrixAsImage(sharpenedMatrix, "sharpened_matrix_mt.png");
-        saveMatrixAsImage(edgeDetectedMatrix, "edge_detected_matrix_mt.png");
-
-        // Validation step: Compare with gold standard
-        boolean isValid = validateWithGoldStandard(sharpenedMatrix,
-                dynamicThreadKernelApplication(matrix, SHARPEN_KERNEL, 1));
-        System.out.println("Gold standard validation: " + (isValid ? "Passed" : "Failed"));
     }
 
     // Method to generate a random matrix
