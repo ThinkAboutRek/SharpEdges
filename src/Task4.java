@@ -7,6 +7,7 @@ public class Task4 {
     private static final Random RANDOM = new Random();
 
     public static void main(String[] args) {
+        // Default configuration parameters
         int totalTasks = 50; // Default task count
         double failureProbability = 0.8; // Default failure probability (80%)
         int numThreads = 4; // Default number of worker threads
@@ -31,16 +32,19 @@ public class Task4 {
             }
         }
 
+        // Print configuration details
         System.out.printf("Task 4: Testing & Failure Simulation\n");
         System.out.printf("Failure Probability: %.2f%%\n", failureProbability * 100);
         System.out.printf("Number of Worker Threads: %d\n", numThreads);
         System.out.printf("Max Retries: %d\n\n", maxRetries);
 
+        // Shared resources for task processing
         TaskQueue taskQueue = new TaskQueue();
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger failCount = new AtomicInteger(0);
         Thread[] threads = new Thread[numThreads];
 
+        // Initialize and start worker threads
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new Thread(new Worker(taskQueue, successCount, failCount, failureProbability, maxRetries),
                     "Thread-" + i);
@@ -48,14 +52,17 @@ public class Task4 {
             System.out.printf("[%s] Thread %s started.\n", getCurrentTime(), threads[i].getName());
         }
 
+        // Submit tasks to the queue
         for (int i = 1; i <= totalTasks; i++) {
             taskQueue.addTask(new Task(i));
             System.out.printf("[%s] Task %d submitted.\n", getCurrentTime(), i);
         }
 
+        // Shutdown task queue after task submission
         System.out.printf("[%s] Shutting down thread pool.\n", getCurrentTime());
         taskQueue.shutdown();
 
+        // Wait for all threads to complete
         for (Thread thread : threads) {
             try {
                 thread.join();
@@ -65,6 +72,7 @@ public class Task4 {
             }
         }
 
+        // Print final execution summary
         System.out.printf("\nExecution Summary:\n");
         System.out.printf("Total tasks: %d\n", totalTasks);
         System.out.printf("Successfully processed: %d\n", successCount.get());
@@ -73,10 +81,12 @@ public class Task4 {
                 (successCount.get() + failCount.get() == totalTasks) ? "Passed" : "Failed");
     }
 
+    // Helper method to get the current time for log timestamps
     private static String getCurrentTime() {
         return java.time.LocalTime.now().toString();
     }
 
+    // Task class representing individual tasks with unique IDs
     static class Task {
         private final int id;
 
@@ -89,19 +99,22 @@ public class Task4 {
         }
     }
 
+    // TaskQueue class for managing task submission and retrieval
     static class TaskQueue {
         private final java.util.Queue<Task> queue = new java.util.LinkedList<>();
         private boolean running = true;
 
+        // Add a new task to the queue and notify waiting threads
         public synchronized void addTask(Task task) {
             queue.add(task);
-            notifyAll();
+            notifyAll(); // Notify waiting threads
         }
 
+        // Retrieve a task from the queue; blocks if the queue is empty
         public synchronized Task getTask() {
             while (queue.isEmpty() && running) {
                 try {
-                    wait();
+                    wait(); // Block until a task is available
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -109,6 +122,7 @@ public class Task4 {
             return queue.poll();
         }
 
+        // Gracefully shut down the task queue
         public synchronized void shutdown() {
             running = false;
             notifyAll();
@@ -142,6 +156,7 @@ public class Task4 {
             }
         }
 
+        // Process a single task with retry logic
         private void processTask(Task task) {
             int retries = 0;
             while (retries <= maxRetries) {
