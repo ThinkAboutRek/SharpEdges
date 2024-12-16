@@ -55,9 +55,9 @@ java src.Task1
 
 ---
 
-### **Task 2: Simulating Task Failures and Retries**  
+### **Task 2: Multi-threaded Task Processing**  
 **Description**:  
-Task 2 introduces task failures and retry mechanisms with failure probabilities.  
+Task 2 demonstrates multi-threaded task processing without using built-in thread pools. It implements custom worker threads to process tasks in parallel, ensuring thread safety and correct execution.  
 
 **Run Command**:  
 ```bash
@@ -65,17 +65,11 @@ java src.Task2
 ```  
 
 **Parameters**:  
-You can optionally pass the following arguments:  
-- **Number of Tasks**  
-- **Failure Probability**  
-
-**Example**:  
-```bash
-java src.Task2 50 0.7
-```  
+This task does not take additional arguments.  
 
 **Expected Output**:  
-- Tasks will show retry attempts and results (success or failure).  
+- Multiple threads will process tasks concurrently, showcasing parallel execution.  
+- Logs display the thread responsible for each task and task completion status.  
 
 ---
 
