@@ -9,10 +9,10 @@ The Sharpedges project is a multi-threaded simulation of distributed systems tha
 ---
 
 ## **Project Structure**  
-- **Task 1**: Flashcard-based system for testing basic multithreading.  
-- **Task 2**: Simulated failure handling using retries and fault tolerance mechanisms.  
-- **Task 3**: Custom Thread Pool and network latency simulation.  
-- **Task 4**: Testing fault tolerance, retries, scalability, and multi-threaded task execution.  
+- **Task 1**: Single-threaded implementation of basic matrix operations for sharpening and edge detection.  
+- **Task 2**: Multi-threaded implementation of kernel-based image processing with fault tolerance.  
+- **Task 3**: Custom thread pool with network latency simulation.  
+- **Task 4**: Fault tolerance, retries, and scalability simulation using worker threads.  
 
 ---
 
@@ -41,9 +41,9 @@ Before running the project, ensure the following software is installed:
 
 ## **Commands for Each Task**  
 
-### **Task 1: Basic Flashcard Multi-threading**  
+### **Task 1: Single-threaded Matrix Operations**  
 **Description**:  
-Task 1 creates a multi-threaded Flashcard system to simulate learning in parallel.  
+Task 1 implements single-threaded operations for sharpening and edge detection on a large randomly generated matrix.  
 
 **Run Command**:  
 ```bash
@@ -51,31 +51,42 @@ java src.Task1
 ```  
 
 **Expected Output**:  
-- Threads will process flashcards concurrently, displaying the flashcard question and answer pairs.
+- Generates a matrix (10,000 x 10,000) with random values between 0 and 255.  
+- Applies **sharpening** and **edge detection** filters.  
+- Saves the resulting images as `.png` files in the project directory:
+  - `original_matrix.png`  
+  - `sharpened_matrix.png`  
+  - `edge_detected_matrix.png`  
+- Displays execution time and sample matrix data (10x10) in the terminal.  
 
 ---
 
-### **Task 2: Multi-threaded Task Processing**  
+### **Task 2: Multi-threaded Image Processing**  
 **Description**:  
-Task 2 demonstrates multi-threaded task processing without using built-in thread pools. It implements custom worker threads to process tasks in parallel, ensuring thread safety and correct execution.  
+Task 2 demonstrates multi-threaded image processing using custom worker threads to process large matrices with sharpening and edge detection filters.  
 
 **Run Command**:  
 ```bash
 java src.Task2
 ```  
 
-**Parameters**:  
-This task does not take additional arguments.  
+**Input**:  
+- The user is prompted to enter the number of threads.  
+- Press **Enter** to auto-detect the available CPU cores.  
 
 **Expected Output**:  
-- Multiple threads will process tasks concurrently, showcasing parallel execution.  
-- Logs display the thread responsible for each task and task completion status.  
+- Processes a large matrix (10,000 x 10,000) concurrently using specified threads.  
+- Applies **sharpening** and **edge detection** filters in parallel.  
+- Saves the resulting images as `.png` files:
+  - `sharpened_matrix_mt.png`  
+  - `edge_detected_matrix_mt.png`  
+- Displays execution time and validation status against the single-threaded "gold standard."
 
 ---
 
 ### **Task 3: Custom Thread Pool and Latency Simulation**  
 **Description**:  
-Task 3 simulates network latency, custom thread pools, and graceful shutdown.  
+Task 3 implements a custom thread pool to simulate network latency, manage tasks concurrently, and ensure a graceful shutdown.  
 
 **Run Command**:  
 ```bash
@@ -83,13 +94,15 @@ java src.Task3
 ```  
 
 **Expected Output**:  
-- Threads process tasks with simulated 200ms delays, and the system shuts down gracefully.
+- Initializes a thread pool with 4 threads.  
+- Processes 10 simulated tasks (messages) with a 200ms delay for each task.  
+- Logs the task processing details and shows a clean shutdown process.  
 
 ---
 
-### **Task 4: Testing and Failure Simulation**  
+### **Task 4: Fault Tolerance and Scalability Testing**  
 **Description**:  
-Task 4 focuses on fault tolerance, retries, and scalability using worker threads.  
+Task 4 simulates a distributed system with configurable failure probabilities, retries, and task management using worker threads.  
 
 **Run Command**:  
 ```bash
@@ -104,8 +117,13 @@ java src.Task4 <Number of Tasks> <Failure Probability> <Number of Threads> <Max 
 
 **Example**:  
 ```bash
-java src.Task4 50 0.8 4 1
+java src.Task4 100 0.5 8 3
 ```  
 
 **Expected Output**:  
-- Detailed logs of task processing, retries, failures, and a final execution summary.
+- Logs task execution, retries, and failures in real-time.  
+- Displays an execution summary including:
+  - Total tasks.  
+  - Successfully completed tasks.  
+  - Permanently failed tasks.  
+- Highlights system behavior under various failure probabilities and retry limits.
